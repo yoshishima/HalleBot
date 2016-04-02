@@ -7,8 +7,9 @@ namespace Bot_Application1.DataAccess
     {
         public List<interaction> addInteraction (string patientID, interaction myInteraction)
         {
+            string sqlInteraction = "insert into interaction (conversationID, createDate, text, sentiment, flag) values({0}, {1}, {2}, {3}, {4})";
             List<object> values = new List<object>();
-            if (myInteraction.conversationID == null)
+            if (myInteraction.conversationID == null || myInteraction.conversationID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 myInteraction.conversationID = Guid.NewGuid();
                 //create conversation
@@ -20,7 +21,8 @@ namespace Bot_Application1.DataAccess
             values.Add(myInteraction.text);
             if (myInteraction.sentiment == null)
             {
-                values.Add(DBNull.Value);
+                sqlInteraction = sqlInteraction.Replace("{3}", "NULL");
+                values.Add(0);
             }
             else
             {
@@ -28,7 +30,8 @@ namespace Bot_Application1.DataAccess
             }
             if (myInteraction.flag == null)
             {
-                values.Add(DBNull.Value);
+                sqlInteraction = sqlInteraction.Replace("{4}", "NULL");
+                values.Add(0);
             }
             else
             {
@@ -36,11 +39,34 @@ namespace Bot_Application1.DataAccess
             }
 
             //createDate has Default Constraint
-            ExecuteCommand("insert into interaction (conversationID, createDate, text, sentiment, flag) values({0}, {1}, {2}, {3}, {4})", values.ToArray());
+            ExecuteCommand(sqlInteraction, values.ToArray());
             int seq = 1;
             foreach (interactionIntent interintent in myInteraction.interactionIntents)
             {
-                ExecuteCommand("insert into interactionIntent (conversationID, createDate, seq, name, confidence) values({0}, {1}, {2}, {3}, {4})", myInteraction.conversationID, myInteraction.createDate, seq, interintent.name, interintent.confidence);
+                List<object> intentValues = new List<object>();
+                string sqlInteractionIntent = "insert into interactionIntent (conversationID, createDate, seq, name, confidence) values({0}, {1}, {2}, {3}, {4})";
+                intentValues.Add(myInteraction.conversationID);
+                intentValues.Add(myInteraction.createDate);
+                intentValues.Add(seq);
+                if (interintent.name == null)
+                {
+                    sqlInteractionIntent = sqlInteractionIntent.Replace("{3}", "NULL");
+                    intentValues.Add(0);
+                } else
+                {
+                    intentValues.Add(interintent.name);
+                }
+                if (interintent.confidence == null)
+                {
+                    sqlInteractionIntent = sqlInteractionIntent.Replace("{4}", "NULL");
+                    intentValues.Add(0);
+                }
+                else
+                {
+                    intentValues.Add(interintent.confidence);
+                }
+
+                ExecuteCommand(sqlInteractionIntent, intentValues.ToArray());
                 seq += 1;
             }
 
