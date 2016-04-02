@@ -72,17 +72,8 @@ namespace Bot_Application1
                 // go get approp response
                 // return the response from your object
 
-                // return our reply to the user
-                string messageText = message.Text.ToLower();
-                List<string> greetingKeys = new List<string> { "hi", "hello", "howdy", "halle" };
-                List<string> greetings = new List<string> {
-                    "Hi {0}! How are you today?",
-                    "Top o' the morning to you {0}"
-                };
-                if (greetingKeys.Where(x => messageText.Contains(x)).Any()) {
-                    Random random = new Random();
-                    return message.CreateReplyMessage(string.Format(greetings[random.Next(greetings.Count)], message.From.Name.Replace("8:", "")));
-                }
+                if (Greeting.IsGreeting(message.Text))
+                    return message.CreateReplyMessage(Greeting.GetGreeting(message.From.Name));
 
                 return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count(), p.patientID));
             }
