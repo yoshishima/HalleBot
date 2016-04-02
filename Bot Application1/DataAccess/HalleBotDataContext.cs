@@ -212,30 +212,42 @@ namespace Bot_Application1.DataAccess
         }
         public responseMessage getMessage(string patientID, MessageTypeEnum messageType, int? responseID = null)
         {
-
-            string sqlIsConversationStale = "select conversationID " +
-                    "from interaction with (nolock) " +
-                    "where conversationID in ( " +
-                    "    select top 1 conversationID " +
-                    "    from conversation with (nolock) " +
-                    "    where patientID = {0} order by createDate desc) " +
-                    "  and createDate >= dateadd(m, -10, {1})";
-            Guid conversationID;
-
-            conversationID = ExecuteQuery<Guid>(sqlIsConversationStale, patientID, DateTime.Now).FirstOrDefault();
-
+            string debug;
             responseMessage ConsumedMessage;
-            if (responseID == null)
+            try
             {
-                ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where messageType = {0} and responseID not in (select responseID from conversation_response where conversationID in {1})  Order By NewID()", messageType, conversationID).FirstOrDefault();
+
+                string sqlIsConversationStale = "select conversationID " +
+                        "from interaction with (nolock) " +
+                        "where conversationID in ( " +
+                        "    select top 1 conversationID " +
+                        "    from conversation with (nolock) " +
+                        "    where patientID = {0} order by createDate desc) " +
+                        "  and createDate >= dateadd(m, -10, {1})";
+                debug = sqlIsConversationStale;
+                Guid conversationID;
+
+                conversationID = ExecuteQuery<Guid>(sqlIsConversationStale, patientID, DateTime.Now).FirstOrDefault();
+                debug = "Before responseID is null";
+                if (responseID == null)
+                {
+                    debug = "responseID null";
+                    ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where messageType = {0} and responseID not in (select responseID from conversation_response where conversationID in {1})  Order By NewID()", messageType, conversationID).FirstOrDefault();
+                }
+                else
+                {
+                    debug = "use responseID";
+                    ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where responseID = {0} Order By NewID()", responseID).FirstOrDefault();
+                }
+
+                debug = "Insert Conversation response";
+                ExecuteCommand("insert into conversation_response(conversationID, responseID) values ({0}, {1})", conversationID, ConsumedMessage.responseID);
             }
-            else
+            catch (Exception ex)
             {
-                ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where responseID = {0} Order By NewID()", responseID).FirstOrDefault();
+                ConsumedMessage = new responseMessage();
+                ConsumedMessage.messageText = ex.Message;
             }
-
-            ExecuteCommand("insert into conversation_response(conversationID, responseID) values ({0}, {1})", conversationID, ConsumedMessage.responseID);
-
             return ConsumedMessage;
         }
     }
