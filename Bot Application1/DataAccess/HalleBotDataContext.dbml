@@ -42,4 +42,17 @@
       <Association Name="interaction_interactionIntent" Member="interaction" ThisKey="conversationID,createDate" OtherKey="conversationID,createDate" Type="interaction" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.responseMessage" Member="responseMessages">
+    <Type Name="responseMessage">
+      <Column Name="responseID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="messageType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="messageText" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.conversation_response" Member="conversation_responses">
+    <Type Name="conversation_response">
+      <Column Name="conversationID" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="responseID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
 </Database>

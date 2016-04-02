@@ -202,5 +202,34 @@ namespace Bot_Application1.DataAccess
 
             ExecuteCommand(sqlPatient + sqlPatientWhere, values.ToArray());
         }
+
+
+        public responseMessage getMessage(string patientID, int messageType, int? responseID = null)
+        {
+
+            string sqlIsConversationStale = "select conversationID " +
+                    "from interaction with (nolock) " +
+                    "where conversationID in ( " +
+                    "    select top 1 conversationID " +
+                    "    from conversation with (nolock) " +
+                    "    where patientID = {0} order by createDate desc) " +
+                    "  and createDate >= dateadd(m, -10, {1})";
+            Guid conversationID;
+
+            conversationID = ExecuteQuery<Guid>(sqlIsConversationStale, patientID, DateTime.Now).FirstOrDefault();
+
+            responseMessage ConsumedMessage;
+            if (responseID == null)
+            {
+                ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where messageType = {0} and responseID not in (select responseID from conversation_response where conversationID in {1})  Order By NewID()", messageType, conversationID).FirstOrDefault();
+            }   else
+            {
+                ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where responseID = {0} Order By NewID()", responseID).FirstOrDefault();
+            }
+
+            ExecuteCommand("insert into conversation_response(conversationID, responseID) values ({0}, {1})", conversationID, ConsumedMessage.responseID);
+
+            return ConsumedMessage;
+        }
     }
 }
