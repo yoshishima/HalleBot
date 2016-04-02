@@ -27,13 +27,6 @@ namespace Bot_Application1
 
             if (message.Type == "Message")
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (var property in message.From.GetType().GetProperties())
-                {
-                    sb.AppendFormat("{0}: {1}{2}", property.Name, property.GetValue(message.From), Environment.NewLine);
-                }
-                return message.CreateReplyMessage(sb.ToString());
-                
                 var intents = Intents.GetIntents(message);
 
                 double sentimentScore = Sentiment.GetScore(message);
@@ -88,7 +81,7 @@ namespace Bot_Application1
                 };
                 if (greetingKeys.Where(x => messageText.Contains(x)).Any()) {
                     Random random = new Random();
-                    return message.CreateReplyMessage(string.Format(greetings[random.Next(greetings.Count)], message.From.Name));
+                    return message.CreateReplyMessage(string.Format(greetings[random.Next(greetings.Count)], message.From.Name.Replace("8:", "")));
                 }
 
                 return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count()));
