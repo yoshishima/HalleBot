@@ -67,12 +67,9 @@ namespace Bot_Application1
 
                     actions = db.addInteraction(p.patientID, iaction);
                 }
-                // conv id, message, intents, score
 
-                // go get approp response
-                // return the response from your object
+                // return an intelligent message here
 
-                // return our reply to the user
                 return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count()));
             }
             else
