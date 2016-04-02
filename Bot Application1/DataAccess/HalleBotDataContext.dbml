@@ -10,7 +10,6 @@
       <Column Name="dateOfBirth" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="gender" Type="System.Char" DbType="Char(1)" CanBeNull="true" />
       <Column Name="createDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="patient_conversation" Member="conversations" ThisKey="patientID" OtherKey="patientID" Type="conversation" />
     </Type>
   </Table>
   <Table Name="dbo.conversation" Member="conversations">
@@ -20,7 +19,6 @@
       <Column Name="createDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="currentLocation" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Association Name="conversation_interaction" Member="interactions" ThisKey="conversationID" OtherKey="conversationID" Type="interaction" />
-      <Association Name="patient_conversation" Member="patient" ThisKey="patientID" OtherKey="patientID" Type="patient" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.interaction" Member="interactions">

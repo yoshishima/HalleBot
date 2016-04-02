@@ -118,8 +118,6 @@ namespace Bot_Application1.DataAccess
 		
 		private System.Nullable<System.DateTime> _createDate;
 		
-		private EntitySet<conversation> _conversations;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -144,7 +142,6 @@ namespace Bot_Application1.DataAccess
 		
 		public patient()
 		{
-			this._conversations = new EntitySet<conversation>(new Action<conversation>(this.attach_conversations), new Action<conversation>(this.detach_conversations));
 			OnCreated();
 		}
 		
@@ -308,19 +305,6 @@ namespace Bot_Application1.DataAccess
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="patient_conversation", Storage="_conversations", ThisKey="patientID", OtherKey="patientID")]
-		public EntitySet<conversation> conversations
-		{
-			get
-			{
-				return this._conversations;
-			}
-			set
-			{
-				this._conversations.Assign(value);
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -340,18 +324,6 @@ namespace Bot_Application1.DataAccess
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
-		
-		private void attach_conversations(conversation entity)
-		{
-			this.SendPropertyChanging();
-			entity.patient = this;
-		}
-		
-		private void detach_conversations(conversation entity)
-		{
-			this.SendPropertyChanging();
-			entity.patient = null;
-		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.conversation")]
@@ -370,8 +342,6 @@ namespace Bot_Application1.DataAccess
 		
 		private EntitySet<interaction> _interactions;
 		
-		private EntityRef<patient> _patient;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -389,7 +359,6 @@ namespace Bot_Application1.DataAccess
 		public conversation()
 		{
 			this._interactions = new EntitySet<interaction>(new Action<interaction>(this.attach_interactions), new Action<interaction>(this.detach_interactions));
-			this._patient = default(EntityRef<patient>);
 			OnCreated();
 		}
 		
@@ -424,10 +393,6 @@ namespace Bot_Application1.DataAccess
 			{
 				if ((this._patientID != value))
 				{
-					if (this._patient.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnpatientIDChanging(value);
 					this.SendPropertyChanging();
 					this._patientID = value;
@@ -487,40 +452,6 @@ namespace Bot_Application1.DataAccess
 			set
 			{
 				this._interactions.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="patient_conversation", Storage="_patient", ThisKey="patientID", OtherKey="patientID", IsForeignKey=true)]
-		public patient patient
-		{
-			get
-			{
-				return this._patient.Entity;
-			}
-			set
-			{
-				patient previousValue = this._patient.Entity;
-				if (((previousValue != value) 
-							|| (this._patient.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._patient.Entity = null;
-						previousValue.conversations.Remove(this);
-					}
-					this._patient.Entity = value;
-					if ((value != null))
-					{
-						value.conversations.Add(this);
-						this._patientID = value.patientID;
-					}
-					else
-					{
-						this._patientID = default(string);
-					}
-					this.SendPropertyChanged("patient");
-				}
 			}
 		}
 		

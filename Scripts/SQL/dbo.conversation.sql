@@ -29,9 +29,10 @@ GO
 
 ALTER TABLE [dbo].[conversation] ADD  CONSTRAINT [DF_conversation_createDate]  DEFAULT (getdate()) FOR [createDate]
 GO
-
+/*
 ALTER TABLE [dbo].[conversation]  WITH CHECK ADD  CONSTRAINT [FK_conversation_patient] FOREIGN KEY([patientID])
 REFERENCES [dbo].[patient] ([patientID])
+*/
 GO
 
 ALTER TABLE [dbo].[conversation] CHECK CONSTRAINT [FK_conversation_patient]
