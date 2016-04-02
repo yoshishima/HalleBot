@@ -32,6 +32,7 @@ namespace Bot_Application1
                 double sentimentScore = Sentiment.GetScore(message);
 
                 // record - returns the last 4 interactions
+                patient p = null;
                 using (HalleBotDataContext db = new HalleBotDataContext())
                 {
                     interaction iaction = new interaction();
@@ -41,7 +42,6 @@ namespace Bot_Application1
                     iaction.interactionIntents.Add(iactionitem);
                     iaction.text = message.Text;
 
-                    patient p = null;
 
                     if(message.From == null)
                     {
@@ -84,7 +84,7 @@ namespace Bot_Application1
                     return message.CreateReplyMessage(string.Format(greetings[random.Next(greetings.Count)], message.From.Name.Replace("8:", "")));
                 }
 
-                return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count()));
+                return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count(), p.patientID));
             }
             else
             {
