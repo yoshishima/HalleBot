@@ -5,6 +5,12 @@ namespace Bot_Application1.DataAccess
 {
     partial class HalleBotDataContext
     {
+        public enum MessageTypeEnum
+        {
+            keepgoing = 0 
+            ,critical = 1
+        }
+
         public List<interaction> addInteraction(string patientID, interaction myInteraction)
         {
             //get last conversation's last interaction (time)
@@ -204,7 +210,7 @@ namespace Bot_Application1.DataAccess
         }
 
 
-        public responseMessage getMessage(string patientID, int messageType, int? responseID = null)
+        public responseMessage getMessage(string patientID, MessageTypeEnum messageType, int? responseID = null)
         {
 
             string sqlIsConversationStale = "select conversationID " +
