@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace Bot_Application1
 {
-    [BotAuthentication]
+    //[BotAuthentication]
     public class MessagesController : ApiController
     {
         /// <summary>
