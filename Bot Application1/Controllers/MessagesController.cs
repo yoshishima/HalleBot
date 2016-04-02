@@ -5,11 +5,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Reflection;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Connector.Utilities;
 using Newtonsoft.Json;
 using Bot_Application1.DataAccess;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Bot_Application1
 {
@@ -25,8 +27,13 @@ namespace Bot_Application1
 
             if (message.Type == "Message")
             {
-                // parse sentiment
-                // figure intents (luis)
+                StringBuilder sb = new StringBuilder();
+                foreach (var property in message.From.GetType().GetProperties())
+                {
+                    sb.AppendFormat("{0}: {1}{2}", property.Name, property.GetValue(message.From), Environment.NewLine);
+                }
+                return message.CreateReplyMessage(sb.ToString());
+                
                 var intents = Intents.GetIntents(message);
 
                 double sentimentScore = Sentiment.GetScore(message);
@@ -74,9 +81,15 @@ namespace Bot_Application1
 
                 // return our reply to the user
                 string messageText = message.Text.ToLower();
-                List<string> greetings = new List<string> { "hi", "hello", "howdy", "halle" };
-                if (greetings.Where(x => messageText.Contains(x)).Any())
-                    return message.CreateReplyMessage("Hi! How are you today?");
+                List<string> greetingKeys = new List<string> { "hi", "hello", "howdy", "halle" };
+                List<string> greetings = new List<string> {
+                    "Hi {0}! How are you today?",
+                    "Top o' the morning to you {0}"
+                };
+                if (greetingKeys.Where(x => messageText.Contains(x)).Any()) {
+                    Random random = new Random();
+                    return message.CreateReplyMessage(string.Format(greetings[random.Next(greetings.Count)], message.From.Name));
+                }
 
                 return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count()));
             }
