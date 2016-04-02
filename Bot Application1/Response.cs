@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Bot_Application1
 {
-    class Response
+    static class Response
     {
+        // TODO: where should the primitives for response come from???
+
+        // TODO: actual type for intent
+
+        public static string GetResponseText(string intent)
+        {
+            return "No matter where you go, there you are...";
+        }
     }
 }
