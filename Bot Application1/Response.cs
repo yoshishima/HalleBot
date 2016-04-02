@@ -15,7 +15,7 @@ namespace Bot_Application1
         public static string GetResponseText(List<Intent> intents)
         {
             //return "No matter where you go, there you are...";
-            return intents.OrderBy(x => x.score).First().intent;
+            return intents.OrderByDescending(x => x.score).First().intent;
         }
     }
 }

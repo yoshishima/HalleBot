@@ -9,7 +9,7 @@ namespace Bot_Application1
     public class Intent
     {
         public string intent { get; set; }
-        public double score { get; set; }
+        public decimal score { get; set; }
 
     }
 }

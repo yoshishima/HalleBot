@@ -29,7 +29,7 @@ namespace Bot_Application1
                     return new Intent
                     {
                         intent = x["intent"].ToString(),
-                        score = Convert.ToDouble(x["score"].ToString())
+                        score = decimal.Parse(x["score"].ToString(), System.Globalization.NumberStyles.Float)
                     };
                 }).ToList();
             }
