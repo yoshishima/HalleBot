@@ -212,7 +212,7 @@ namespace Bot_Application1.DataAccess
         }
         public responseMessage getMessage(string patientID, MessageTypeEnum messageType, int? responseID = null)
         {
-            string debug;
+            string debug = "";
             responseMessage ConsumedMessage;
             try
             {
@@ -232,7 +232,7 @@ namespace Bot_Application1.DataAccess
                 if (responseID == null)
                 {
                     debug = "responseID null";
-                    ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where messageType = {0} and responseID not in (select responseID from conversation_response where conversationID in {1})  Order By NewID()", messageType, conversationID).FirstOrDefault();
+                    ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where messageType = {0} and responseID not in (select responseID from conversation_response where conversationID = {1})  Order By NewID()", messageType, conversationID).FirstOrDefault();
                 }
                 else
                 {
@@ -246,7 +246,7 @@ namespace Bot_Application1.DataAccess
             catch (Exception ex)
             {
                 ConsumedMessage = new responseMessage();
-                ConsumedMessage.messageText = ex.Message;
+                ConsumedMessage.messageText = debug + System.Environment.NewLine + ex.Message;
             }
             return ConsumedMessage;
         }
