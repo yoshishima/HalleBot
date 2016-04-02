@@ -73,6 +73,11 @@ namespace Bot_Application1
                 // return the response from your object
 
                 // return our reply to the user
+                string messageText = message.Text.ToLower();
+                List<string> greetings = new List<string> { "hi", "hello", "howdy", "halle" };
+                if (greetings.Where(x => messageText.Contains(x)).Any())
+                    return message.CreateReplyMessage("Hi! How are you today?");
+
                 return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count()));
             }
             else
