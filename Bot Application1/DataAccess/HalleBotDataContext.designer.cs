@@ -42,6 +42,12 @@ namespace Bot_Application1.DataAccess
     partial void InsertinteractionIntent(interactionIntent instance);
     partial void UpdateinteractionIntent(interactionIntent instance);
     partial void DeleteinteractionIntent(interactionIntent instance);
+    partial void InsertresponseMessage(responseMessage instance);
+    partial void UpdateresponseMessage(responseMessage instance);
+    partial void DeleteresponseMessage(responseMessage instance);
+    partial void Insertconversation_response(conversation_response instance);
+    partial void Updateconversation_response(conversation_response instance);
+    partial void Deleteconversation_response(conversation_response instance);
     #endregion
 		
 		public HalleBotDataContext() : 
@@ -103,6 +109,22 @@ namespace Bot_Application1.DataAccess
 			get
 			{
 				return this.GetTable<interactionIntent>();
+			}
+		}
+		
+		public System.Data.Linq.Table<responseMessage> responseMessages
+		{
+			get
+			{
+				return this.GetTable<responseMessage>();
+			}
+		}
+		
+		public System.Data.Linq.Table<conversation_response> conversation_responses
+		{
+			get
+			{
+				return this.GetTable<conversation_response>();
 			}
 		}
 	}
@@ -906,6 +928,226 @@ namespace Bot_Application1.DataAccess
 						this._createDate = default(System.DateTime);
 					}
 					this.SendPropertyChanged("interaction");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.responseMessage")]
+	public partial class responseMessage : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _responseID;
+		
+		private System.Nullable<int> _messageType;
+		
+		private string _messageText;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnresponseIDChanging(int value);
+    partial void OnresponseIDChanged();
+    partial void OnmessageTypeChanging(System.Nullable<int> value);
+    partial void OnmessageTypeChanged();
+    partial void OnmessageTextChanging(string value);
+    partial void OnmessageTextChanged();
+    #endregion
+		
+		public responseMessage()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_responseID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int responseID
+		{
+			get
+			{
+				return this._responseID;
+			}
+			set
+			{
+				if ((this._responseID != value))
+				{
+					this.OnresponseIDChanging(value);
+					this.SendPropertyChanging();
+					this._responseID = value;
+					this.SendPropertyChanged("responseID");
+					this.OnresponseIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_messageType", DbType="Int")]
+		public System.Nullable<int> messageType
+		{
+			get
+			{
+				return this._messageType;
+			}
+			set
+			{
+				if ((this._messageType != value))
+				{
+					this.OnmessageTypeChanging(value);
+					this.SendPropertyChanging();
+					this._messageType = value;
+					this.SendPropertyChanged("messageType");
+					this.OnmessageTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_messageText", DbType="VarChar(MAX)")]
+		public string messageText
+		{
+			get
+			{
+				return this._messageText;
+			}
+			set
+			{
+				if ((this._messageText != value))
+				{
+					this.OnmessageTextChanging(value);
+					this.SendPropertyChanging();
+					this._messageText = value;
+					this.SendPropertyChanged("messageText");
+					this.OnmessageTextChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.conversation_response")]
+	public partial class conversation_response : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _conversationID;
+		
+		private int _responseID;
+		
+		private System.Nullable<System.DateTime> _createDate;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnconversationIDChanging(System.Guid value);
+    partial void OnconversationIDChanged();
+    partial void OnresponseIDChanging(int value);
+    partial void OnresponseIDChanged();
+    partial void OncreateDateChanging(System.Nullable<System.DateTime> value);
+    partial void OncreateDateChanged();
+    #endregion
+		
+		public conversation_response()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_conversationID", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid conversationID
+		{
+			get
+			{
+				return this._conversationID;
+			}
+			set
+			{
+				if ((this._conversationID != value))
+				{
+					this.OnconversationIDChanging(value);
+					this.SendPropertyChanging();
+					this._conversationID = value;
+					this.SendPropertyChanged("conversationID");
+					this.OnconversationIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_responseID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int responseID
+		{
+			get
+			{
+				return this._responseID;
+			}
+			set
+			{
+				if ((this._responseID != value))
+				{
+					this.OnresponseIDChanging(value);
+					this.SendPropertyChanging();
+					this._responseID = value;
+					this.SendPropertyChanged("responseID");
+					this.OnresponseIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_createDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> createDate
+		{
+			get
+			{
+				return this._createDate;
+			}
+			set
+			{
+				if ((this._createDate != value))
+				{
+					this.OncreateDateChanging(value);
+					this.SendPropertyChanging();
+					this._createDate = value;
+					this.SendPropertyChanged("createDate");
+					this.OncreateDateChanged();
 				}
 			}
 		}

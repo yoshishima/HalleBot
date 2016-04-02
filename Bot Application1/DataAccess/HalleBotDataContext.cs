@@ -3,8 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Bot_Application1.DataAccess
 {
+
+    public enum MessageTypeEnum
+    {
+        keepgoing = 0
+        , critical = 1
+    }
+
     partial class HalleBotDataContext
     {
+
         public List<interaction> addInteraction(string patientID, interaction myInteraction)
         {
             //get last conversation's last interaction (time)
@@ -201,6 +209,46 @@ namespace Bot_Application1.DataAccess
             }
 
             ExecuteCommand(sqlPatient + sqlPatientWhere, values.ToArray());
+        }
+        public responseMessage getMessage(string patientID, MessageTypeEnum messageType, int? responseID = null)
+        {
+            string debug = "";
+            responseMessage ConsumedMessage;
+            try
+            {
+
+                string sqlIsConversationStale = "select conversationID " +
+                        "from interaction with (nolock) " +
+                        "where conversationID in ( " +
+                        "    select top 1 conversationID " +
+                        "    from conversation with (nolock) " +
+                        "    where patientID = {0} order by createDate desc) " +
+                        "  and createDate >= dateadd(m, -10, {1})";
+                debug = sqlIsConversationStale;
+                Guid conversationID;
+
+                conversationID = ExecuteQuery<Guid>(sqlIsConversationStale, patientID, DateTime.Now).FirstOrDefault();
+                debug = "Before responseID is null";
+                if (responseID == null)
+                {
+                    debug = "responseID null";
+                    ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where messageType = {0} and responseID not in (select responseID from conversation_response where conversationID = {1})  Order By NewID()", messageType, conversationID).FirstOrDefault();
+                }
+                else
+                {
+                    debug = "use responseID";
+                    ConsumedMessage = ExecuteQuery<responseMessage>("select TOP 1 * from responseMessage Where responseID = {0} Order By NewID()", responseID).FirstOrDefault();
+                }
+
+                debug = "Insert Conversation response";
+                ExecuteCommand("insert into conversation_response(conversationID, responseID) values ({0}, {1})", conversationID, ConsumedMessage.responseID);
+            }
+            catch (Exception ex)
+            {
+                ConsumedMessage = new responseMessage();
+                ConsumedMessage.messageText = debug + System.Environment.NewLine + ex.Message;
+            }
+            return ConsumedMessage;
         }
     }
 }

@@ -17,8 +17,8 @@ namespace Bot_Application1
 
         public static bool IsGreeting(string message)
         {
-            string messageText = message.ToLower();
-            return greetingKeys.Where(x => messageText.Contains(x)).Any();
+            List<string> messageWords = message.ToLower().Split(" ".ToCharArray()).ToList();
+            return messageWords.Any(x => greetingKeys.Contains(x));
         }
 
         public static string GetGreeting(string to)
