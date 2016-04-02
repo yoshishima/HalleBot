@@ -5,11 +5,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Reflection;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Connector.Utilities;
 using Newtonsoft.Json;
 using Bot_Application1.DataAccess;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Bot_Application1
 {
@@ -25,8 +27,6 @@ namespace Bot_Application1
 
             if (message.Type == "Message")
             {
-                // parse sentiment
-                // figure intents (luis)
                 var intents = Intents.GetIntents(message);
 
                 double sentimentScore = Sentiment.GetScore(message);
@@ -72,11 +72,8 @@ namespace Bot_Application1
                 // go get approp response
                 // return the response from your object
 
-                // return our reply to the user
-                string messageText = message.Text.ToLower();
-                List<string> greetings = new List<string> { "hi", "hello", "howdy", "halle" };
-                if (greetings.Where(x => messageText.Contains(x)).Any())
-                    return message.CreateReplyMessage("Hi! How are you today?");
+                if (Greeting.IsGreeting(message.Text))
+                    return message.CreateReplyMessage(Greeting.GetGreeting(message.From.Name));
 
                 return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count(), p.patientID));
             }
