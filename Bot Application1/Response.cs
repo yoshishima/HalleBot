@@ -12,10 +12,10 @@ namespace Bot_Application1
 
         // TODO: actual type for intent
 
-        public static string GetResponseText(List<Intent> intents)
+        public static string GetResponseText(List<Intent> intents, double sentimentScore)
         {
             //return "No matter where you go, there you are...";
-            return intents.OrderBy(x => x.score).First().intent;
+            return intents.OrderBy(x => x.score).First().intent +  " - " + sentimentScore.ToString();
         }
     }
 }

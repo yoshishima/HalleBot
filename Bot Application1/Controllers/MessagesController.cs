@@ -25,10 +25,16 @@ namespace Bot_Application1
                 // figure intents (luis)
                 var intents = Intents.GetIntents(message);
 
-                // long text???
+                double sentimentScore = Sentiment.GetScore(message);
+
+                // record - returns the last 4 interactions
+                // conv id, message, intents, score
+
+                // go get approp response
+                // return the response from your object
 
                 // return our reply to the user
-                return message.CreateReplyMessage(Response.GetResponseText(intents));
+                return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore));
             }
             else
             {
