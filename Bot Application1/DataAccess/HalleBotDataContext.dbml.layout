@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="HalleBotDataContext">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.625, 8.5" name="HalleBotDataContext">
   <DataContextMoniker Name="/HalleBotDataContext" />
   <nestedChildShapes>
     <classShape Id="30be3c29-92e7-435f-bb2c-1ea57d98b30b" absoluteBounds="0.5, 0.5, 2, 2.3478011067708335">
@@ -25,6 +25,19 @@
       <nodes>
         <classShapeMoniker Id="48ad0802-6f31-4b39-8dc7-26056d026622" />
         <classShapeMoniker Id="eac56c16-20f0-43e6-8d19-1cf939ff84ac" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="a6b8a893-d84d-493f-b0ba-832f963aab51" absoluteBounds="9.375, 0.625, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/HalleBotDataContext/interactionIntent" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0dc1baac-93e2-4c8a-80e0-81bdf14e3efb" absoluteBounds="9.39, 1.085, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(8.5 : 1.51044840494792); (9.375 : 1.51044840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/HalleBotDataContext/interaction/interaction_interactionIntent" />
+      <nodes>
+        <classShapeMoniker Id="eac56c16-20f0-43e6-8d19-1cf939ff84ac" />
+        <classShapeMoniker Id="a6b8a893-d84d-493f-b0ba-832f963aab51" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

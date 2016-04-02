@@ -39,6 +39,9 @@ namespace Bot_Application1.DataAccess
     partial void Insertinteraction(interaction instance);
     partial void Updateinteraction(interaction instance);
     partial void Deleteinteraction(interaction instance);
+    partial void InsertinteractionIntent(interactionIntent instance);
+    partial void UpdateinteractionIntent(interactionIntent instance);
+    partial void DeleteinteractionIntent(interactionIntent instance);
     #endregion
 		
 		public HalleBotDataContext() : 
@@ -92,6 +95,14 @@ namespace Bot_Application1.DataAccess
 			get
 			{
 				return this.GetTable<interaction>();
+			}
+		}
+		
+		public System.Data.Linq.Table<interactionIntent> interactionIntents
+		{
+			get
+			{
+				return this.GetTable<interactionIntent>();
 			}
 		}
 	}
@@ -504,6 +515,8 @@ namespace Bot_Application1.DataAccess
 		
 		private System.Nullable<int> _flag;
 		
+		private EntitySet<interactionIntent> _interactionIntents;
+		
 		private EntityRef<conversation> _conversation;
 		
     #region Extensibility Method Definitions
@@ -524,6 +537,7 @@ namespace Bot_Application1.DataAccess
 		
 		public interaction()
 		{
+			this._interactionIntents = new EntitySet<interactionIntent>(new Action<interactionIntent>(this.attach_interactionIntents), new Action<interactionIntent>(this.detach_interactionIntents));
 			this._conversation = default(EntityRef<conversation>);
 			OnCreated();
 		}
@@ -632,6 +646,19 @@ namespace Bot_Application1.DataAccess
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="interaction_interactionIntent", Storage="_interactionIntents", ThisKey="conversationID,createDate", OtherKey="conversationID,createDate")]
+		public EntitySet<interactionIntent> interactionIntents
+		{
+			get
+			{
+				return this._interactionIntents;
+			}
+			set
+			{
+				this._interactionIntents.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="conversation_interaction", Storage="_conversation", ThisKey="conversationID", OtherKey="conversationID", IsForeignKey=true)]
 		public conversation conversation
 		{
@@ -662,6 +689,223 @@ namespace Bot_Application1.DataAccess
 						this._conversationID = default(System.Guid);
 					}
 					this.SendPropertyChanged("conversation");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_interactionIntents(interactionIntent entity)
+		{
+			this.SendPropertyChanging();
+			entity.interaction = this;
+		}
+		
+		private void detach_interactionIntents(interactionIntent entity)
+		{
+			this.SendPropertyChanging();
+			entity.interaction = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.interactionIntent")]
+	public partial class interactionIntent : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _conversationID;
+		
+		private System.DateTime _createDate;
+		
+		private int _seq;
+		
+		private string _name;
+		
+		private System.Nullable<decimal> _confidence;
+		
+		private EntityRef<interaction> _interaction;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnconversationIDChanging(System.Guid value);
+    partial void OnconversationIDChanged();
+    partial void OncreateDateChanging(System.DateTime value);
+    partial void OncreateDateChanged();
+    partial void OnseqChanging(int value);
+    partial void OnseqChanged();
+    partial void OnnameChanging(string value);
+    partial void OnnameChanged();
+    partial void OnconfidenceChanging(System.Nullable<decimal> value);
+    partial void OnconfidenceChanged();
+    #endregion
+		
+		public interactionIntent()
+		{
+			this._interaction = default(EntityRef<interaction>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_conversationID", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid conversationID
+		{
+			get
+			{
+				return this._conversationID;
+			}
+			set
+			{
+				if ((this._conversationID != value))
+				{
+					if (this._interaction.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnconversationIDChanging(value);
+					this.SendPropertyChanging();
+					this._conversationID = value;
+					this.SendPropertyChanged("conversationID");
+					this.OnconversationIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_createDate", DbType="DateTime NOT NULL", IsPrimaryKey=true)]
+		public System.DateTime createDate
+		{
+			get
+			{
+				return this._createDate;
+			}
+			set
+			{
+				if ((this._createDate != value))
+				{
+					if (this._interaction.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OncreateDateChanging(value);
+					this.SendPropertyChanging();
+					this._createDate = value;
+					this.SendPropertyChanged("createDate");
+					this.OncreateDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_seq", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int seq
+		{
+			get
+			{
+				return this._seq;
+			}
+			set
+			{
+				if ((this._seq != value))
+				{
+					this.OnseqChanging(value);
+					this.SendPropertyChanging();
+					this._seq = value;
+					this.SendPropertyChanged("seq");
+					this.OnseqChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_name", DbType="VarChar(50)")]
+		public string name
+		{
+			get
+			{
+				return this._name;
+			}
+			set
+			{
+				if ((this._name != value))
+				{
+					this.OnnameChanging(value);
+					this.SendPropertyChanging();
+					this._name = value;
+					this.SendPropertyChanged("name");
+					this.OnnameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_confidence", DbType="Decimal(18,8)")]
+		public System.Nullable<decimal> confidence
+		{
+			get
+			{
+				return this._confidence;
+			}
+			set
+			{
+				if ((this._confidence != value))
+				{
+					this.OnconfidenceChanging(value);
+					this.SendPropertyChanging();
+					this._confidence = value;
+					this.SendPropertyChanged("confidence");
+					this.OnconfidenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="interaction_interactionIntent", Storage="_interaction", ThisKey="conversationID,createDate", OtherKey="conversationID,createDate", IsForeignKey=true)]
+		public interaction interaction
+		{
+			get
+			{
+				return this._interaction.Entity;
+			}
+			set
+			{
+				interaction previousValue = this._interaction.Entity;
+				if (((previousValue != value) 
+							|| (this._interaction.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._interaction.Entity = null;
+						previousValue.interactionIntents.Remove(this);
+					}
+					this._interaction.Entity = value;
+					if ((value != null))
+					{
+						value.interactionIntents.Add(this);
+						this._conversationID = value.conversationID;
+						this._createDate = value.createDate;
+					}
+					else
+					{
+						this._conversationID = default(System.Guid);
+						this._createDate = default(System.DateTime);
+					}
+					this.SendPropertyChanged("interaction");
 				}
 			}
 		}

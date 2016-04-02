@@ -12,9 +12,11 @@ namespace Bot_Application1.DataAccess
             {
                 myInteraction.conversationID = Guid.NewGuid();
                 //create conversation
-                ExecuteCommand("insert into conversation (conversationID, patientID) values ({0}, {1})", myInteraction.conversationID, patientID);
+                ExecuteCommand("insert into conversation (conversationID, patientID) values ({0}, {1})", myInteraction.conversationID, string.IsNullOrEmpty(patientID) ? "" : patientID);
             }
             values.Add(myInteraction.conversationID);
+            myInteraction.createDate = DateTime.Now;
+            values.Add(myInteraction.createDate);
             values.Add(myInteraction.text);
             if (myInteraction.sentiment == null)
             {
@@ -34,10 +36,22 @@ namespace Bot_Application1.DataAccess
             }
 
             //createDate has Default Constraint
-            ExecuteCommand("insert into interaction (conversationID, text, sentiment, flag) values({0}, {1}, {2}, {3})", values.ToArray());
+            ExecuteCommand("insert into interaction (conversationID, createDate, text, sentiment, flag) values({0}, {1}, {2}, {3}, {4})", values.ToArray());
+            int seq = 1;
+            foreach (interactionIntent interintent in myInteraction.interactionIntents)
+            {
+                ExecuteCommand("insert into interactionIntent (conversationID, createDate, seq, name, confidence) values({0}, {1}, {2}, {3}, {4})", myInteraction.conversationID, myInteraction.createDate, seq, interintent.name, interintent.confidence);
+                seq += 1;
+            }
 
+            List< interaction> returnInteractions = ExecuteQuery<interaction>("select top 4 * from interaction where conversationID = {0} order by createDate desc", myInteraction.conversationID).ToList();
 
-            return ExecuteQuery<interaction>("select top 4 * from interaction where conversationID = {0} order by createDate desc", myInteraction.conversationID).ToList();
+            foreach (interaction inter in returnInteractions)
+            {
+                inter.interactionIntents.AddRange(ExecuteQuery<interactionIntent>("select * from interactionintent where conversationID = {0} and createDate = {1}", myInteraction.conversationID, myInteraction.createDate));
+            }
+
+            return returnInteractions;
         }
         public void updateConversationLocation(Guid conversationID, string currentLocation)
         {

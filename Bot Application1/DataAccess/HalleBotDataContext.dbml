@@ -28,7 +28,18 @@
       <Column Name="text" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Column Name="sentiment" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
       <Column Name="flag" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="interaction_interactionIntent" Member="interactionIntents" ThisKey="conversationID,createDate" OtherKey="conversationID,createDate" Type="interactionIntent" />
       <Association Name="conversation_interaction" Member="conversation" ThisKey="conversationID" OtherKey="conversationID" Type="conversation" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.interactionIntent" Member="interactionIntents">
+    <Type Name="interactionIntent">
+      <Column Name="conversationID" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="createDate" Type="System.DateTime" DbType="DateTime NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="seq" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="confidence" Type="System.Decimal" DbType="Decimal(18,8)" CanBeNull="true" />
+      <Association Name="interaction_interactionIntent" Member="interaction" ThisKey="conversationID,createDate" OtherKey="conversationID,createDate" Type="interaction" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
