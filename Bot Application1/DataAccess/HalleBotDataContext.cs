@@ -101,21 +101,54 @@ namespace Bot_Application1.DataAccess
         }
         public void addPatient(patient myPatient)
         {
+            string sqlPatient = "insert into patient (patientID, name, mobileNumber, homeNumber, workNumber, dateOfBirth, gender) values({0}, {1}, {2}, {3}, {4}, {5}, {6})";
             List<object> values = new List<object>();
             values.Add(myPatient.patientID);           
             values.Add(myPatient.name);
-            values.Add(myPatient.mobileNumber);
-            values.Add(myPatient.homeNumber);
-            values.Add(myPatient.workNumber);
-            if (myPatient.dateOfBirth == null) {
-                values.Add(DBNull.Value);
+            if (myPatient.mobileNumber == null)
+            {
+                values.Add("");
+                sqlPatient = sqlPatient.Replace("{2}", "NULL");
+            } else
+            {
+                values.Add(myPatient.mobileNumber);
             }
-            else {
+            if (myPatient.homeNumber == null)
+            {
+                values.Add("");
+                sqlPatient = sqlPatient.Replace("{3}", "NULL");
+            }
+            else
+            {
+                values.Add(myPatient.homeNumber);
+            }
+            if (myPatient.workNumber == null)
+            {
+                values.Add("");
+                sqlPatient = sqlPatient.Replace("{4}", "NULL");
+            }
+            else
+            {
+                values.Add(myPatient.workNumber);
+            }
+            if (myPatient.dateOfBirth == null) {
+                values.Add(0);
+                sqlPatient = sqlPatient.Replace("{5}", "NULL");
+            }
+            else
+            {
                 values.Add(myPatient.dateOfBirth);
             }
-            values.Add(myPatient.gender);
+            if (myPatient.gender == null) {
+                values.Add("N");
+                sqlPatient = sqlPatient.Replace("{6}", "NULL");
+            }
+            else
+            {
+                values.Add(myPatient.gender);
+            }
                 
-            ExecuteCommand("insert into patient (patientID, name, mobileNumber, homeNumber, workNumber, dateOfBirth, gender) values({0}, {1}, {2}, {3}, {4}, {5}, {6})", values.ToArray());
+            ExecuteCommand(sqlPatient, values.ToArray());
 
         }
     }
