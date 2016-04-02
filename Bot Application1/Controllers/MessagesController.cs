@@ -69,13 +69,84 @@ namespace Bot_Application1
                 }
                 // conv id, message, intents, score
 
+                actions = actions.OrderByDescending(x => x.createDate).ToList();
+
+                int size = actions.Count();
+
+                interaction interaction1 = null;
+                interaction interaction2 = null;
+                interaction interaction3 = null;
+                interaction interaction4 = null;
+
+                double Sentiment1 = 0;
+                double Sentiment2 = 0;
+                double Sentiment3 = 0;
+                double Sentiment4 = 0;
+
+                double weightedSentiment;
+
+                if (size >= 1) {
+                    interaction1 = actions.ElementAt(0);
+                    if (interaction1.sentiment.HasValue)
+                    {
+                        Double.TryParse(interaction1.sentiment.ToString(), out Sentiment1);
+                    }
+                }
+
+                if (size >= 2)
+                {
+                   
+                    interaction2 = actions.ElementAt(1);
+
+                    if (interaction2.sentiment.HasValue)
+                    {
+                        Double.TryParse(interaction2.sentiment.ToString(), out Sentiment2);
+                    }
+                }
+
+                if (size >= 3)
+                {
+                    interaction3 = actions.ElementAt(2);
+
+                    if(interaction3.sentiment.HasValue)
+                    {
+                        Double.TryParse(interaction3.sentiment.ToString(), out Sentiment3);
+                    }
+                }
+                
+                if(size >= 4)
+                {
+                    interaction4 = actions.ElementAt(3);
+
+                    if (interaction4.sentiment.HasValue)
+                    {
+                        Double.TryParse(interaction4.sentiment.ToString(), out Sentiment3);
+                    }
+                }
+
+                switch (size)
+                {
+                    case 2:
+                        weightedSentiment = (Sentiment1 * 0.6) + (Sentiment2 * 0.4);
+                        break;
+                    case 3:
+                        weightedSentiment = (Sentiment1 * 0.5) + (Sentiment2 * 0.3) + (Sentiment3 * 0.2);
+                        break;
+                    case 4:
+                        weightedSentiment = (Sentiment1 * 0.4) + (Sentiment2 * 0.3) + (Sentiment3 * 0.2) + (Sentiment4 * 0.1);
+                        break;
+                    default:
+                        weightedSentiment = Sentiment1;
+                        break;
+                }
+
                 // go get approp response
                 // return the response from your object
 
                 if (Greeting.IsGreeting(message.Text))
                     return message.CreateReplyMessage(Greeting.GetGreeting(message.From.Name));
 
-                return message.CreateReplyMessage(Response.GetResponseText(intents, sentimentScore, actions.Count(), p.patientID));
+                return message.CreateReplyMessage(Response.GetResponseText(intents, weightedSentiment, size, p.patientID));
             }
             else
             {
