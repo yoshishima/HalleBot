@@ -23,11 +23,12 @@ namespace Bot_Application1
             {
                 // parse sentiment
                 // figure intents (luis)
+                var intents = Intents.GetIntents(message);
 
                 // long text???
 
                 // return our reply to the user
-                return message.CreateReplyMessage(Response.GetResponseText(""));
+                return message.CreateReplyMessage(Response.GetResponseText(intents));
             }
             else
             {
