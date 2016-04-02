@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Bot_Application1
 {
-    class Intent
+    public class Intent
     {
+        public string intent { get; set; }
+        public double score { get; set; }
+
     }
 }

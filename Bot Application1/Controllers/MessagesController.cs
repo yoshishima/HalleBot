@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 
 namespace Bot_Application1
 {
-    [BotAuthentication]
     public class MessagesController : ApiController
     {
         /// <summary>
@@ -22,17 +21,14 @@ namespace Bot_Application1
         {
             if (message.Type == "Message")
             {
-                // calculate something for us to return
-                int length = (message.Text ?? string.Empty).Length;
-
-                // return our reply to the user
-                //return message.CreateReplyMessage($"You sent {length} characters");
-                return message.CreateReplyMessage("I'm sorry Dave, I can't do that.");
-
                 // parse sentiment
                 // figure intents (luis)
-                // long text
+                var intents = Intents.GetIntents(message);
 
+                // long text???
+
+                // return our reply to the user
+                return message.CreateReplyMessage(Response.GetResponseText(intents));
             }
             else
             {
