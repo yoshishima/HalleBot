@@ -7,11 +7,11 @@ namespace Bot_Application1
 {
     public static class Greeting
     {
-        static List<string> greetingKeys = new List<string> { "hi", "hello", "howdy", "halle" };
+        static List<string> greetingKeys = new List<string> { "hi", "hello", "howdy", "halle", "morning" };
 
         static List<string> greetings = new List<string> {
             "Hi {0}! How are you today?",
-            "Top o' the morning to you {0}!",
+            //"Top o' the morning to you {0}!",
             "I'm really happy to hear from you {0} :)"
         };
 
