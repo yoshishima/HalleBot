@@ -26,7 +26,13 @@ namespace Bot_Application1
                 int length = (message.Text ?? string.Empty).Length;
 
                 // return our reply to the user
-                return message.CreateReplyMessage($"You sent {length} characters");
+                //return message.CreateReplyMessage($"You sent {length} characters");
+                return message.CreateReplyMessage("I'm sorry Dave, I can't do that.");
+
+                // parse sentiment
+                // figure intents (luis)
+                // long text
+
             }
             else
             {
