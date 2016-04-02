@@ -7,13 +7,25 @@ namespace Bot_Application1.DataAccess
     {
         public List<interaction> addInteraction (string patientID, interaction myInteraction)
         {
+            //get last conversation's last interaction (time)
+            //is interaction past arbitrary time (10 minutes)
+            string sqlIsConversationStale = "select conversationID " +
+                    "from interaction with (nolock) " +
+                    "where conversationID in ( " +
+                    "    select top 1 conversationID " +
+                    "    from conversation with (nolock) " +
+                    "    where patientID = {0} order by createDate desc) " +
+                    "  and createDate >= dateadd(m, -10, {1})";
+            myInteraction.conversationID = ExecuteQuery<Guid>(sqlIsConversationStale, patientID, DateTime.Now).FirstOrDefault();
+
+            //Add interation
             string sqlInteraction = "insert into interaction (conversationID, createDate, text, sentiment, flag) values({0}, {1}, {2}, {3}, {4})";
             List<object> values = new List<object>();
             if (myInteraction.conversationID == null || myInteraction.conversationID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 myInteraction.conversationID = Guid.NewGuid();
                 //create conversation
-                ExecuteCommand("insert into conversation (conversationID, patientID) values ({0}, {1})", myInteraction.conversationID, string.IsNullOrEmpty(patientID) ? "" : patientID);
+                ExecuteCommand("insert into conversation (conversationID, patientID, createDate) values ({0}, {1}, {2})", myInteraction.conversationID, string.IsNullOrEmpty(patientID) ? "" : patientID, DateTime.Now);
             }
             values.Add(myInteraction.conversationID);
             myInteraction.createDate = DateTime.Now;
