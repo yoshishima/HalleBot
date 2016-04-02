@@ -5,7 +5,7 @@ namespace Bot_Application1.DataAccess
 {
     partial class HalleBotDataContext
     {
-        public List<interaction> addInteraction (string patientID, interaction myInteraction)
+        public List<interaction> addInteraction(string patientID, interaction myInteraction)
         {
             //get last conversation's last interaction (time)
             //is interaction past arbitrary time (10 minutes)
@@ -64,7 +64,8 @@ namespace Bot_Application1.DataAccess
                 {
                     sqlInteractionIntent = sqlInteractionIntent.Replace("{3}", "NULL");
                     intentValues.Add(0);
-                } else
+                }
+                else
                 {
                     intentValues.Add(interintent.name);
                 }
@@ -82,7 +83,7 @@ namespace Bot_Application1.DataAccess
                 seq += 1;
             }
 
-            List< interaction> returnInteractions = ExecuteQuery<interaction>("select top 4 * from interaction where conversationID = {0} order by createDate desc", myInteraction.conversationID).ToList();
+            List<interaction> returnInteractions = ExecuteQuery<interaction>("select top 4 * from interaction where conversationID = {0} order by createDate desc", myInteraction.conversationID).ToList();
 
             foreach (interaction inter in returnInteractions)
             {
@@ -103,13 +104,14 @@ namespace Bot_Application1.DataAccess
         {
             string sqlPatient = "insert into patient (patientID, name, mobileNumber, homeNumber, workNumber, dateOfBirth, gender) values({0}, {1}, {2}, {3}, {4}, {5}, {6})";
             List<object> values = new List<object>();
-            values.Add(myPatient.patientID);           
+            values.Add(myPatient.patientID);
             values.Add(myPatient.name);
             if (myPatient.mobileNumber == null)
             {
                 values.Add("");
                 sqlPatient = sqlPatient.Replace("{2}", "NULL");
-            } else
+            }
+            else
             {
                 values.Add(myPatient.mobileNumber);
             }
@@ -131,7 +133,8 @@ namespace Bot_Application1.DataAccess
             {
                 values.Add(myPatient.workNumber);
             }
-            if (myPatient.dateOfBirth == null) {
+            if (myPatient.dateOfBirth == null)
+            {
                 values.Add(0);
                 sqlPatient = sqlPatient.Replace("{5}", "NULL");
             }
@@ -139,7 +142,8 @@ namespace Bot_Application1.DataAccess
             {
                 values.Add(myPatient.dateOfBirth);
             }
-            if (myPatient.gender == null) {
+            if (myPatient.gender == null)
+            {
                 values.Add("N");
                 sqlPatient = sqlPatient.Replace("{6}", "NULL");
             }
@@ -147,9 +151,56 @@ namespace Bot_Application1.DataAccess
             {
                 values.Add(myPatient.gender);
             }
-                
+
             ExecuteCommand(sqlPatient, values.ToArray());
 
+        }
+
+        public void updatePatient(patient myPatient)
+        {
+            string sqlPatient = "update patient ";
+            string sqlPatientWhere = " where patientID = {0}";
+            List<object> values = new List<object>();
+            values.Add(myPatient.patientID);
+            int i = 1;
+            bool IsFirstValue = true;
+            if (!string.IsNullOrEmpty(myPatient.name))
+            {
+                sqlPatient += " name = {" + i + "}";
+                values.Add(myPatient.name);
+                IsFirstValue = false;
+                i += 1;
+            }
+            if (!string.IsNullOrEmpty(myPatient.mobileNumber))
+            {
+                sqlPatient += IsFirstValue ? "" : "," + " mobileNumber = {" + i + "}";
+                values.Add(myPatient.mobileNumber);
+                IsFirstValue = false;
+                i += 1;
+            }
+            if (!string.IsNullOrEmpty(myPatient.homeNumber))
+            {
+                sqlPatient += IsFirstValue ? "" : "," + " homeNumber = {" + i + "}";
+                values.Add(myPatient.homeNumber);
+                IsFirstValue = false;
+                i += 1;
+            }
+            if (!string.IsNullOrEmpty(myPatient.workNumber))
+            {
+                sqlPatient += IsFirstValue ? "" : "," + " workNumber = {" + i + "}";
+                values.Add(myPatient.workNumber);
+                IsFirstValue = false;
+                i += 1;
+            }
+            if (myPatient.gender.HasValue && !string.IsNullOrEmpty(myPatient.gender.ToString()))
+            {
+                sqlPatient += IsFirstValue ? "" : "," + " gender = {" + i + "}";
+                values.Add(myPatient.gender);
+                IsFirstValue = false;
+                i += 1;
+            }
+
+            ExecuteCommand(sqlPatient + sqlPatientWhere, values.ToArray());
         }
     }
 }
