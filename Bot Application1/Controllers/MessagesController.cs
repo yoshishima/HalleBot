@@ -41,9 +41,31 @@ namespace Bot_Application1
                     iaction.interactionIntents.Add(iactionitem);
                     iaction.text = message.Text;
 
+                    patient p = null;
+
+                    if(message.From == null)
+                    {
+                        message.From = new ChannelAccount();
+                    }
+
+                    if(message.From.Id == null)
+                    {
+                        message.From.Id = "1000";
+                    }
+
+                    p = db.getPatient(message.From.Id);
+
+                    if (p == null)
+                    {
+                        p = new patient();
+                        p.patientID = message.From.Id;
+                        p.name = message.From.Name;
+                        db.addPatient(p);
+                    }
+
                     iaction.sentiment = Convert.ToDecimal(sentimentScore);
 
-                    actions = db.addInteraction("1000", iaction);
+                    actions = db.addInteraction(p.patientID, iaction);
                 }
                 // conv id, message, intents, score
 
