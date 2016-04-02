@@ -12,10 +12,21 @@ namespace Bot_Application1
 
         // TODO: actual type for intent
 
-        public static string GetResponseText(List<Intent> intents, double sentimentScore, int count)
+        public static string GetResponseText(List<Intent> intents, double sentimentScore, int count, string patientID)
         {
             //return "No matter where you go, there you are...";
-            return intents.OrderByDescending(x => x.score).First().intent +  " - " + sentimentScore.ToString() + " - " + count;
+            Intent i = intents.OrderByDescending(x => x.score).First();
+            if (i.intent == "ContinueConversation")
+            {
+                using (DataAccess.HalleBotDataContext db = new DataAccess.HalleBotDataContext())
+                {
+                    return db.getMessage(patientID, DataAccess.MessageTypeEnum.keepgoing).messageText;
+                }
+            }
+            else
+            {
+                return i.intent + " - " + sentimentScore.ToString() + " - " + count;
+            }
         }
     }
 }

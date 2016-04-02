@@ -33,12 +33,24 @@
         <elementListCompartment Id="0dc1baac-93e2-4c8a-80e0-81bdf14e3efb" absoluteBounds="9.39, 1.085, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(8.5 : 1.51044840494792); (9.375 : 1.51044840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(8.5 : 1.51044840494792); (9.375 : 1.51044840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/HalleBotDataContext/interaction/interaction_interactionIntent" />
       <nodes>
         <classShapeMoniker Id="eac56c16-20f0-43e6-8d19-1cf939ff84ac" />
         <classShapeMoniker Id="a6b8a893-d84d-493f-b0ba-832f963aab51" />
       </nodes>
     </associationConnector>
+    <classShape Id="94a68683-3026-431a-9879-293ab05f1fa0" absoluteBounds="3.625, 3.25, 2, 1.3862939453125">
+      <DataClassMoniker Name="/HalleBotDataContext/responseMessage" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ec12acae-c392-4091-a782-ce9613f7bf37" absoluteBounds="3.64, 3.71, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4adbfb0b-2c9f-4b20-b087-5644a78b5e13" absoluteBounds="3.875, 5.375, 2, 1.3862939453125">
+      <DataClassMoniker Name="/HalleBotDataContext/conversation_response" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ca570915-7dc0-4104-95a5-f3640d68f589" absoluteBounds="3.89, 5.835, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>
