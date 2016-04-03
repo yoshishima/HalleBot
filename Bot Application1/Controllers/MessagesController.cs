@@ -23,134 +23,96 @@ namespace Bot_Application1
         /// </summary>
         public async Task<Message> Post([FromBody]Message message)
         {
-            List<interaction> actions = null;
-
             if (message.Type == "Message")
             {
-                var intents = Intents.GetIntents(message);
-
-                double sentimentScore = Sentiment.GetScore(message);
-
-                // record - returns the last 4 interactions
-                patient p = null;
-                using (HalleBotDataContext db = new HalleBotDataContext())
-                {
-                    interaction iaction = new interaction();
-                    interactionIntent iactionitem = new interactionIntent();
-                    iactionitem.confidence = intents[0].score;
-                    iactionitem.name = intents[0].intent;
-                    iaction.interactionIntents.Add(iactionitem);
-                    iaction.text = message.Text;
-
-
-                    if(message.From == null)
-                    {
-                        message.From = new ChannelAccount();
-                    }
-
-                    if(message.From.Id == null)
-                    {
-                        message.From.Id = "1000";
-                    }
-
-                    p = db.getPatient(message.From.Id);
-
-                    if (p == null)
-                    {
-                        p = new patient();
-                        p.patientID = message.From.Id;
-                        p.name = message.From.Name;
-                        db.addPatient(p);
-                    }
-
-                    iaction.sentiment = Convert.ToDecimal(sentimentScore);
-
-                    actions = db.addInteraction(p.patientID, iaction);
-                }
-                // conv id, message, intents, score
-
-                actions = actions.OrderByDescending(x => x.createDate).ToList();
-
-                int size = actions.Count();
-
-                interaction interaction1 = null;
-                interaction interaction2 = null;
-                interaction interaction3 = null;
-                interaction interaction4 = null;
-
-                double Sentiment1 = 0;
-                double Sentiment2 = 0;
-                double Sentiment3 = 0;
-                double Sentiment4 = 0;
-
-                double weightedSentiment;
-
-                if (size >= 1) {
-                    interaction1 = actions.ElementAt(0);
-                    if (interaction1.sentiment.HasValue)
-                    {
-                        Double.TryParse(interaction1.sentiment.ToString(), out Sentiment1);
-                    }
-                }
-
-                if (size >= 2)
-                {
-                   
-                    interaction2 = actions.ElementAt(1);
-
-                    if (interaction2.sentiment.HasValue)
-                    {
-                        Double.TryParse(interaction2.sentiment.ToString(), out Sentiment2);
-                    }
-                }
-
-                if (size >= 3)
-                {
-                    interaction3 = actions.ElementAt(2);
-
-                    if(interaction3.sentiment.HasValue)
-                    {
-                        Double.TryParse(interaction3.sentiment.ToString(), out Sentiment3);
-                    }
-                }
-                
-                if(size >= 4)
-                {
-                    interaction4 = actions.ElementAt(3);
-
-                    if (interaction4.sentiment.HasValue)
-                    {
-                        Double.TryParse(interaction4.sentiment.ToString(), out Sentiment3);
-                    }
-                }
-
-                switch (size)
-                {
-                    case 2:
-                        weightedSentiment = (Sentiment1 * 0.6) + (Sentiment2 * 0.4);
-                        break;
-                    case 3:
-                        weightedSentiment = (Sentiment1 * 0.5) + (Sentiment2 * 0.3) + (Sentiment3 * 0.2);
-                        break;
-                    case 4:
-                        weightedSentiment = (Sentiment1 * 0.4) + (Sentiment2 * 0.3) + (Sentiment3 * 0.2) + (Sentiment4 * 0.1);
-                        break;
-                    default:
-                        weightedSentiment = Sentiment1;
-                        break;
-                }
-
-                // go get approp response
-                // return the response from your object
-
                 if (Greeting.IsGreeting(message.Text))
                     return message.CreateReplyMessage(Greeting.GetGreeting(message.From.Name));
 
-                return message.CreateReplyMessage(Response.GetResponseText(intents, weightedSentiment, size, p.patientID));
+                var intents = Intents.GetIntents(message);
+
+                patient p = GetPatient(message);
+                // record - returns the last 4 interactions
+                List<interaction> actions = AddInteraction(message, intents[0], p.patientID)
+                    .OrderByDescending(x => x.createDate).ToList();
+                List<double> sentiments = actions.Select(x => {
+                    double result = 0;
+                    if (x.sentiment.HasValue)
+                    {
+                        double.TryParse(x.sentiment.ToString(), out result);
+                    }
+                    return result;
+                }).ToList();
+
+                return message.CreateReplyMessage(Response.GetResponseText(intents,
+                    CalculateWeightedSentiment(sentiments), sentiments.Count, p.patientID));
             }
             else
             {
                 return HandleSystemMessage(message);
+            }
+        }
+
+        interaction CreateInteraction(Intent intent, double sentimentScore, string text)
+        {
+            interaction iaction = new interaction();
+            interactionIntent iactionitem = new interactionIntent();
+            iactionitem.confidence = intent.score;
+            iactionitem.name = intent.intent;
+            iaction.interactionIntents.Add(iactionitem);
+            iaction.text = text;
+            iaction.sentiment = Convert.ToDecimal(sentimentScore);
+            return iaction;
+        }
+
+        patient GetPatient(Message message)
+        {
+            using (HalleBotDataContext db = new HalleBotDataContext())
+            {
+                if (message.From == null)
+                {
+                    message.From = new ChannelAccount();
+                }
+
+                if (message.From.Id == null)
+                {
+                    message.From.Id = "1000";
+                }
+
+                patient p = db.getPatient(message.From.Id);
+                if (p == null)
+                {
+                    p = new patient
+                    {
+                        patientID = message.From.Id,
+                        name = message.From.Name
+                    };
+                    db.addPatient(p);
+                }
+
+                return p;
+            }
+        }
+
+        List<interaction> AddInteraction(Message message, Intent intent, string patientId)
+        {
+            using (HalleBotDataContext db = new HalleBotDataContext())
+            {
+                return db.addInteraction(patientId, CreateInteraction(intent, Sentiment.GetScore(message), message.Text));
+            }
+        }
+
+        double CalculateWeightedSentiment(List<double> sentiments)
+        {
+            switch (sentiments.Count)
+            {
+                case 2:
+                    return (sentiments[0] * 0.6) + (sentiments[1] * 0.4);
+                case 3:
+                    return (sentiments[0] * 0.5) + (sentiments[1] * 0.3) + (sentiments[2] * 0.2);
+                case 4:
+                    return (sentiments[0] * 0.4) + (sentiments[1] * 0.3) + (sentiments[2] * 0.2) + (sentiments[3] * 0.1);
+                default:
+                    return sentiments[0];
             }
         }
 
